@@ -1,0 +1,5 @@
+venv
+existing
+test
+*.swp
+*.pyc
