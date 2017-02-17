@@ -19,18 +19,30 @@ def create(upload_object, ckan, apikey):
 
 def upload_resource(datapackage_json, ckan, rootpath):
     resource_path = os.path.join(os.getcwd(), rootpath, datapackage_json['resources'][0]['path'])
-    click.echo(resource_path)
-
-    r_id = ckan.action.package_show(name_or_id=datapackage_json['name'])['resources'][0]['id']
-
+    pkg = ckan.action.package_show(name_or_id=datapackage_json['name'])
+    
     try:
-        ckan.action.resource_update(
-                id=r_id,
-                url='dummy-value',
-                name=datapackage_json['title'],
-                upload=open(resource_path, 'rb'))
-    except Exception as e:
-        raise e
+        r_id = pkg['resources'][0]['id']
+    except IndexError:
+        r_id = None
+    if r_id:
+        try:
+            ckan.action.resource_update(
+                    id=r_id,
+                    url='dummy-value',
+                    name=datapackage_json['title'],
+                    upload=open(resource_path, 'rb'))
+        except Exception as e:
+            raise e
+    else:
+        try:
+            ckan.action.resource_create(
+                    package_id=pkg['id'],
+                    url='dummy-value',
+                    name=datapackage_json['title'],
+                    upload=open(resource_path, 'rb'))
+        except Exception as e:
+            raise e
 
 def get_extras_object(dp_json):
     extras_to_exclude = ['years_in_catalog', 'expected_number_of_geographies', 'default']
@@ -47,7 +59,7 @@ def get_extras_object(dp_json):
     for field in dp_json['resources'][0]['schema']['fields']:
         if field['dimension'] == False:
             continue
-        extras.append({'key': field['name'], 'value': ','.join(field['constraints']['enum'])})
+        extras.append({'key': field['name'], 'value': ';'.join(field['constraints']['enum'])})
     return extras
 
 def load_datapackage_file(datapackage_path):
