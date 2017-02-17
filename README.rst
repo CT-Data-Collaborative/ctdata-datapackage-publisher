@@ -30,7 +30,7 @@ Configuration and Use
 
      $ publish --ckan http://data.ctdata.org --datapackage <path-to-datapackage.json> --ckanapikey <your api key>
 
-The CKAN url and the API Key can also be read from environment variables; `CKANURL` and `CKANAPIKEY` respectively.
+The CKAN url and the API Key can also be read from environment variables; ``CKANURL`` and ``CKANAPIKEY`` respectively.
 
 ::
 
