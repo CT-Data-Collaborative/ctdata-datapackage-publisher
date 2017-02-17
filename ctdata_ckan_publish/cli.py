@@ -73,7 +73,8 @@ def get_extras_object(dp_json):
     extras.append({'key': 'Description', 'value': dp_json['description']})
     extras.append({'key': 'Default', 'value': json.dumps(dp_json['ckan_extras']['default']['value'])})
     try:
-        years = ';'.join(dp_json['ckan_extras']['years_in_catalog']['value'])
+        year_strs = [str(y) for y in dp_json['ckan_extras']['years_in_catalog']['value']]
+        years = ';'.join(year_strs)
         extras.append({'key': 'Years in Catalog', 'value': years})
     except KeyError as e:
         raise e
