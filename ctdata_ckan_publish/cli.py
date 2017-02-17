@@ -10,11 +10,26 @@ Main `ctdata_ckan_publish` CLI.
 import json
 import csv
 import os
+import re
 
 import ckanapi
 import click
 import datapackage
 import requests
+
+regex = re.compile(
+        r'^(?:http|ftp)s?://' # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+        r'localhost|' #localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+        r'(?::\d+)?' # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+
+def check_ckan_url(url):
+    match = regex.match(url)
+    if match:
+        return True
+    return False
 
 def create(upload_object, ckan, apikey): 
     id = ckan.action.package_show(name_or_id=upload_object['name'])['id']
@@ -92,14 +107,26 @@ def load_datapackage_file(datapackage_path):
     return dpdict, upload_object
 
 @click.command()
-@click.option('--datapackage', help='A path to the datapackage.json', type=click.Path(exists=True))
-@click.option('--ckanapikey', default=None, help='You CKAN API key from your user account view', envvar='CKANAPIKEY')
-@click.option('--dry', default=False, help='Do a dry run where everything is complete except for API calls')
-@click.option('--verbose', default=False)
-def main(datapackage, ckanapikey, dry, verbose):
+@click.option('--ckan',
+        help='URL for CKAN instance',
+        envvar='CKANURL')
+@click.option('--datapackage',
+        help='A path to the datapackage.json',
+        type=click.Path(exists=True))
+@click.option('--ckanapikey', 
+        default=None,
+        help='You CKAN API key from your user account view',
+        envvar='CKANAPIKEY')
+@click.option('--dry',
+        default=False,
+        help='Do a dry run where everything is complete except for API calls')
+def main(datapackage, ckanapikey, dry, ckan):
     """Main dispatcher function for publishing a dataset"""
+    if check_ckan_url(ckan) is False:
+        click.echo("{} isn't a valid url".format(ckan))
+        raise TypeError
     datapackage_json, upload_object = load_datapackage_file(datapackage)
-    ctdata = ckanapi.RemoteCKAN('http://data.ctdata.org', apikey=ckanapikey, user_agent='CTData Publisher/1.0 (+http://ctdata.org)')
+    ctdata = ckanapi.RemoteCKAN(ckan, apikey=ckanapikey, user_agent='CTData Publisher/1.0 (+http://ctdata.org)')
     package_root_dir = datapackage.split('/')[0]
     if not dry:
         # First we will create the new dataset or overwrite the existing dataset 
@@ -116,11 +143,6 @@ def main(datapackage, ckanapikey, dry, verbose):
             raise e
 
         click.echo("{} Uploaded".format(datapackage_json['resources'][0]['path']))
-    # else: 
-    #     click.echo("DRY RUN---{} Created".format(upload_object['title']))
-    #     click.echo("DRY RUN---{} Uploaded".format(datapackage_json['resources'][0]['path']))
-    # if (verbose and dry) or verbose:
-    #     click.echo(json.dumps(upload_object))
 
 if __name__ == '__main__':
     main()

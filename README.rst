@@ -28,9 +28,9 @@ Configuration and Use
 
 ::
 
-     $ publish --datapackage <path-to-datapackage.json> --ckanapikey <your api key>
+     $ publish --ckan http://data.ctdata.org --datapackage <path-to-datapackage.json> --ckanapikey <your api key>
 
-You can also store your api key in an environment variable called `CKANAPIKEY` and it will be read automatically.
+The CKAN url and the API Key can also be read from environment variables; `CKANURL` and `CKANAPIKEY` respectively.
 
 ::
 
