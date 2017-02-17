@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Allow cookiecutter to be executable through `python -m cookiecutter`."""
+"""Allow to be executable through `python -m ctdata_ckan_publish`."""
 from __future__ import absolute_import
 
 from .cli import main

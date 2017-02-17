@@ -3,3 +3,4 @@ existing
 test
 *.swp
 *.pyc
+*.egg-info

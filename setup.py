@@ -18,7 +18,7 @@ setup(
     py_modules=['ctdata_ckan_publish'],
     install_requires=[
         'click>=6.7',
-        'request>=2.13.0',
+        'requests>=2.13.0',
         'ckanapi>=4.0',
         'datapackage>=0.8.6'],
     entry_points={

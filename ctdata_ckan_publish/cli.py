@@ -96,7 +96,7 @@ def load_datapackage_file(datapackage_path):
 @click.option('--ckanapikey', default=None, help='You CKAN API key from your user account view', envvar='CKANAPIKEY')
 @click.option('--dry', default=False, help='Do a dry run where everything is complete except for API calls')
 @click.option('--verbose', default=False)
-def process(datapackage, ckanapikey, dry, verbose):
+def main(datapackage, ckanapikey, dry, verbose):
     """Main dispatcher function for publishing a dataset"""
     datapackage_json, upload_object = load_datapackage_file(datapackage)
     ctdata = ckanapi.RemoteCKAN('http://data.ctdata.org', apikey=ckanapikey, user_agent='CTData Publisher/1.0 (+http://ctdata.org)')
@@ -123,4 +123,4 @@ def process(datapackage, ckanapikey, dry, verbose):
     #     click.echo(json.dumps(upload_object))
 
 if __name__ == '__main__':
-    process()
+    main()
