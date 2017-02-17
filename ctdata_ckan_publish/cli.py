@@ -1,12 +1,20 @@
-# Dataset publishing CLI for CTData CKAN datasets
-#
-import ckanapi
-import csv
+# -*- coding: utf-8 -*-
+
+"""
+ckdata_ckan_publish.cli
+-----------------------
+
+Main `ctdata_ckan_publish` CLI.
+"""
+
 import json
+import csv
+import os
+
+import ckanapi
 import click
 import datapackage
 import requests
-import os
 
 def create(upload_object, ckan, apikey): 
     id = ckan.action.package_show(name_or_id=upload_object['name'])['id']
