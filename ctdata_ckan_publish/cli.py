@@ -17,6 +17,28 @@ import click
 import datapackage
 import requests
 
+source_lookup = {
+    'uscensus': 'US Census',
+    'ctsde': 'Connecticut State Department of Education',
+    'ctdph': 'Connecticut Department of Public Health',
+    'ctopm': 'Connecticut Office of Policy and Management',
+    'samhsa': 'Substance Abuse and Mental Health Services Administration',
+    'ctdmhas': 'Connecituct Department of Mental Health and Addiction Services',
+    'municipalities': 'Municipalities',
+    'ctdss': 'Connecticut Department of Social Services',
+    'ctdol': 'Connecticut Department of Labor',
+    'ctdecd': 'Connecticut Department of Economic and Community Development',
+    'ctdcf': 'Connecticut Department of Children and Families',
+    'ctocme': 'Connecticut Office of the Chief Medical Examiner',
+    'ctoec': 'Connecticut Office of Early Childhood',
+    'ctdespp': 'Connecticut Department of Emergency Services and Public Protections',
+    'seda': 'Stanford Education Data Archive',
+    'ctlib': 'Connecticut State Library',
+    'cthfa': 'Connecticut Housing Finance Authority',
+    'ctdot': 'Connecticut Department of Transportation',
+    'ctdoh': 'Connecticut Department of Housing' }
+
+ 
 regex = re.compile(
         r'^(?:http|ftp)s?://' # http:// or https://
         r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
@@ -72,6 +94,7 @@ def get_extras_object(dp_json):
     extras = [{'key': e['ckan_name'], 'value': e['value']} for k,e in dp_json['ckan_extras'].items() if k not in extras_to_exclude]  
     extras.append({'key': 'Description', 'value': dp_json['description']})
     extras.append({'key': 'Default', 'value': json.dumps(dp_json['ckan_extras']['default']['value'])})
+    extras.append({'key': 'Source', 'value': source_lookup[dp_json['sources'][0]['name']]
     try:
         year_strs = [str(y) for y in dp_json['ckan_extras']['years_in_catalog']['value']]
         years = ';'.join(year_strs)
