@@ -94,7 +94,7 @@ def get_extras_object(dp_json):
     extras = [{'key': e['ckan_name'], 'value': e['value']} for k,e in dp_json['ckan_extras'].items() if k not in extras_to_exclude]  
     extras.append({'key': 'Description', 'value': dp_json['description']})
     extras.append({'key': 'Default', 'value': json.dumps(dp_json['ckan_extras']['default']['value'])})
-    extras.append({'key': 'Source', 'value': source_lookup[dp_json['sources'][0]['name']]
+    extras.append({'key': 'Source', 'value': source_lookup[dp_json['sources'][0]['name']]})
     try:
         year_strs = [str(y) for y in dp_json['ckan_extras']['years_in_catalog']['value']]
         years = ';'.join(year_strs)
