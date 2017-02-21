@@ -167,6 +167,8 @@ def main(datapackage, ckanapikey, dry, ckan):
             raise e
 
         click.echo("{} Uploaded".format(datapackage_json['resources'][0]['path']))
+    else:
+        click.echo(upload_object)
 
 if __name__ == '__main__':
     main()
