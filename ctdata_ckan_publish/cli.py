@@ -108,9 +108,18 @@ def get_extras_object(dp_json):
 def load_datapackage_file(datapackage_path):
     dp = datapackage.DataPackage(datapackage_path)
     dpdict = dp.descriptor
+
+    # First we need to see what sort of author object we have. CTData only publishes one author per dataset, but
+    # we want to support valid datapackage.json files which allow for an array of them
     try:
-        upload_object = {'name': dpdict['name'], 'title': dpdict['title'], 'maintainer': dpdict['author']['name'], 
-                'maintainer_email': dpdict['author']['email'], 'owner_org': dpdict['sources'][0]['name']}
+        author_name = dpdict['author']['name']
+        author = dpdict['author']
+    except TypeError as e:
+        author = dpdict['author'][0]
+
+    try:
+        upload_object = {'name': dpdict['name'], 'title': dpdict['title'], 'maintainer': author['name'],
+                'maintainer_email': author['email'], 'owner_org': dpdict['sources'][0]['name']}
     except KeyError as e:
         raise e
     try:
