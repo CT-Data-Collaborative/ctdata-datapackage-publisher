@@ -58,7 +58,8 @@ def create(upload_object, ckan, apikey):
     upload_object['id'] = id
     headers = {'user-agent': 'ctdata-publisher/0.0.1', 'Authorization': apikey, 'Content-Type': 'charset=utf-8'}
     try:
-        r = requests.post('http://data.ctdata.org/api/action/package_patch', headers=headers, data = json.dumps(upload_object))
+        r = requests.post('http://data.ctdata.org/api/action/package_update', headers=headers, data = json.dumps(
+            upload_object))
     except Exception as e:
         raise e
 
