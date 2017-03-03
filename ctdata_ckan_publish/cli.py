@@ -73,6 +73,10 @@ def upload_resource(datapackage_json, ckan, rootpath):
         r_id = None
     if r_id:
         try:
+            ckan.action.resource_delete(id=r_id)
+        except Exception as e:
+            raise e
+        try:
             ckan.action.resource_update(
                     id=r_id,
                     url='dummy-value',
