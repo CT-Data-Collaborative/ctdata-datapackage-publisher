@@ -76,23 +76,14 @@ def upload_resource(datapackage_json, ckan, rootpath):
             ckan.action.resource_delete(id=r_id)
         except Exception as e:
             raise e
-        try:
-            ckan.action.resource_create(
-                    id=r_id,
-                    url='dummy-value',
-                    name=datapackage_json['title'],
-                    upload=open(resource_path, 'rb'))
-        except Exception as e:
-            raise e
-    else:
-        try:
-            ckan.action.resource_create(
-                    package_id=pkg['id'],
-                    url='dummy-value',
-                    name=datapackage_json['title'],
-                    upload=open(resource_path, 'rb'))
-        except Exception as e:
-            raise e
+    try:
+        ckan.action.resource_create(
+                package_id=pkg['id'],
+                url='dummy-value',
+                name=datapackage_json['title'],
+                upload=open(resource_path, 'rb'))
+    except Exception as e:
+        raise e
 
 def get_extras_object(dp_json):
     extras_to_exclude = ['years_in_catalog', 'expected_number_of_geographies', 'default']
