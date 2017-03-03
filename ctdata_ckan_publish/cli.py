@@ -77,7 +77,7 @@ def upload_resource(datapackage_json, ckan, rootpath):
         except Exception as e:
             raise e
         try:
-            ckan.action.resource_update(
+            ckan.action.resource_create(
                     id=r_id,
                     url='dummy-value',
                     name=datapackage_json['title'],
