@@ -53,7 +53,7 @@ def check_ckan_url(url):
         return True
     return False
 
-def _update(upload_object, apikey)
+def _update(upload_object, apikey):
     headers = {'user-agent': 'ctdata-publisher/0.0.1', 'Authorization': apikey, 'Content-Type': 'charset=utf-8'}
     try:
         r = requests.post('http://data.ctdata.org/api/action/package_update', headers=headers, data=json.dumps(
