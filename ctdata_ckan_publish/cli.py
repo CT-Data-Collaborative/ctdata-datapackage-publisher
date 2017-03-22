@@ -53,15 +53,33 @@ def check_ckan_url(url):
         return True
     return False
 
-def create(upload_object, ckan, apikey): 
-    id = ckan.action.package_show(name_or_id=upload_object['name'])['id']
-    upload_object['id'] = id
+def _update(upload_object, apikey)
     headers = {'user-agent': 'ctdata-publisher/0.0.1', 'Authorization': apikey, 'Content-Type': 'charset=utf-8'}
     try:
-        r = requests.post('http://data.ctdata.org/api/action/package_update', headers=headers, data = json.dumps(
+        r = requests.post('http://data.ctdata.org/api/action/package_update', headers=headers, data=json.dumps(
             upload_object))
     except Exception as e:
         raise e
+    return r
+
+def _create(upload_object, ckan, apikey):
+    headers = {'user-agent': 'ctdata-publisher/0.0.1', 'Authorization': apikey, 'Content-Type': 'charset=utf-8'}
+    try:
+        r = requests.post('http://data.ctdata.org/api/action/package_create', headers=headers, data=json.dumps(
+            upload_object))
+    except Exception as e:
+        raise e
+    return r
+
+
+def create(upload_object, ckan, apikey):
+    try:
+        id = ckan.action.package_show(name_or_id=upload_object['name'])['id']
+    except:
+        return _create(upload_object, ckan, apikey)
+    upload_object['id'] = id
+    return _update(upload_object, apikiey)
+
 
 def upload_resource(datapackage_json, ckan, rootpath):
     resource_path = os.path.join(os.getcwd(), rootpath, datapackage_json['resources'][0]['path'])
@@ -160,11 +178,15 @@ def main(datapackage, ckanapikey, dry, ckan):
     if not dry:
         # First we will create the new dataset or overwrite the existing dataset 
         try:
-            create(upload_object, ctdata, ckanapikey)
+            r = create(upload_object, ctdata, ckanapikey)
         except Exception as e:
-            raise e 
-        click.echo("{} Created".format(upload_object['title']))
-        
+            raise e
+
+        if r.status_code == 200:
+            click.echo("{} Created".format(upload_object['title']))
+        else:
+            raise Exception
+
         # Then we will upload the resource
         try:
             upload_resource(datapackage_json, ctdata, package_root_dir)
