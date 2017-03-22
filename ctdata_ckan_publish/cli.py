@@ -55,14 +55,11 @@ def check_ckan_url(url):
 
 def _update(upload_object, apikey):
     headers = {'user-agent': 'ctdata-publisher/0.0.1', 'Authorization': apikey, 'Content-Type': 'charset=utf-8'}
-    try:
-        r = requests.post('http://data.ctdata.org/api/action/package_update', headers=headers, data=json.dumps(
-            upload_object))
-    except Exception as e:
-        raise e
+    r = requests.post('http://data.ctdata.org/api/action/package_update', headers=headers, data=json.dumps(
+        upload_object))
     return r
 
-def _create(upload_object, ckan, apikey):
+def _create(upload_object, apikey):
     headers = {'user-agent': 'ctdata-publisher/0.0.1', 'Authorization': apikey, 'Content-Type': 'charset=utf-8'}
     try:
         r = requests.post('http://data.ctdata.org/api/action/package_create', headers=headers, data=json.dumps(
@@ -75,8 +72,8 @@ def _create(upload_object, ckan, apikey):
 def create(upload_object, ckan, apikey):
     try:
         id = ckan.action.package_show(name_or_id=upload_object['name'])['id']
-    except:
-        return _create(upload_object, ckan, apikey)
+    except ckanapi.errors.NotFound as e:
+        return _create(upload_object, apikey)
     upload_object['id'] = id
     return _update(upload_object, apikiey)
 
@@ -104,11 +101,12 @@ def upload_resource(datapackage_json, ckan, rootpath):
         raise e
 
 def get_extras_object(dp_json):
-    extras_to_exclude = ['years_in_catalog', 'expected_number_of_geographies', 'default']
+    extras_to_exclude = ['years_in_catalog', 'expected_number_of_geographies', 'default', 'units']
     extras = [{'key': e['ckan_name'], 'value': e['value']} for k,e in dp_json['ckan_extras'].items() if k not in extras_to_exclude]  
     extras.append({'key': 'Description', 'value': dp_json['description']})
     extras.append({'key': 'Default', 'value': json.dumps(dp_json['ckan_extras']['default']['value'])})
     extras.append({'key': 'Source', 'value': source_lookup[dp_json['sources'][0]['name']]})
+    extras.append({'key': 'Units', 'value': json.dumps(dp_json['ckan_extras']['units']['value'])})
     try:
         year_strs = [str(y) for y in dp_json['ckan_extras']['years_in_catalog']['value']]
         years = ';'.join(year_strs)
