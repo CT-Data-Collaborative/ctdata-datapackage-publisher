@@ -75,7 +75,7 @@ def create(upload_object, ckan, apikey):
     except ckanapi.errors.NotFound as e:
         return _create(upload_object, apikey)
     upload_object['id'] = id
-    return _update(upload_object, apikiey)
+    return _update(upload_object, apikey)
 
 
 def upload_resource(datapackage_json, ckan, rootpath):
