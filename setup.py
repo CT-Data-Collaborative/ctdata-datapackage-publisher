@@ -20,7 +20,7 @@ setup(
         'click>=6.7',
         'requests>=2.13.0',
         'ckanapi>=4.0',
-        'datapackage>=0.8.6'],
+        'datapackage>=0.8.6,<1.0'],
     entry_points={
         'console_scripts': [
             'publish = ctdata_ckan_publish.__main__:main',
