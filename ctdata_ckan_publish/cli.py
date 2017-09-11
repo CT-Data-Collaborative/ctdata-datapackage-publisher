@@ -36,6 +36,7 @@ source_lookup = {
     'ctlib': 'Connecticut State Library',
     'cthfa': 'Connecticut Housing Finance Authority',
     'ctdot': 'Connecticut Department of Transportation',
+    'ctsdc': 'Connecticut State Data Center',
     'ctdoh': 'Connecticut Department of Housing' }
 
  
